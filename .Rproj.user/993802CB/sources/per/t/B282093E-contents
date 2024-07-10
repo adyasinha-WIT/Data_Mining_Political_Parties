@@ -1,0 +1,97 @@
+# Load required Packages
+install.packages("tm")
+install.packages("wordcloud")
+install.packages("RColorBrewer")
+install.packages("SnowballC")
+install.packages("syuzhet")
+
+# Load libraries into R Studio
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+library(SnowballC)
+library(syuzhet)
+
+docs <- Corpus(DirSource("Political Parties"))
+
+summary(docs)
+str(docs)
+names(docs)
+
+#########################
+tweets_Greens.df<- read.csv("./Political Parties/NZGreens_tweets.csv")
+tweets_labour.df<- read.csv("./Political Parties/nzlabour_tweets.csv")
+tweets_National.df<- read.csv("./Political Parties/NZNationalParty_tweets.csv")
+
+
+# Display tweets
+head(tweets_Greens.df)
+head(tweets_labour.df)
+head(tweets_National.df)
+
+# Display 'text' field of data frame
+
+# For NZGreens
+head(tweets_Greens.df$text)
+tweets_Greens.df2<- tweets_Greens.df$text
+
+# For NZlabour
+head(tweets_labour.df$text)
+tweets_labour.df2<- tweets_labour.df$text
+
+# For NZNational
+head(tweets_National.df$text)
+tweets_National.df2<- tweets_National.df$text
+
+#########################
+
+invalid_strings <- is.na(iconv(tweets_Greens.df2, "UTF-8", "UTF-8"))
+tweets_Greens.df2[invalid_strings]
+tweets_Greens.df2 <- iconv(tweets_Greens.df2, "latin1", "UTF-8")
+
+invalid_strings <- is.na(iconv(tweets_labour.df2, "UTF-8", "UTF-8"))
+tweets_labour.df2[invalid_strings]
+tweets_labour.df2 <- iconv(tweets_labour.df2, "latin1", "UTF-8")
+
+invalid_strings <- is.na(iconv(tweets_National.df2, "UTF-8", "UTF-8"))
+tweets_National.df2[invalid_strings]
+tweets_National.df2 <- iconv(tweets_National.df2, "latin1", "UTF-8")
+
+#########################
+
+# Use a 'find and replace' function to remove garbage from tweets
+
+# For NZGreens
+tweets_Greens.df2<- gsub("www\\.[^\\s]+|@\\S+|http\\S+|#\\S+|<[^>]+>", "", tweets_Greens.df2)
+tweets_Greens.df2<- gsub("[^a-zA-Z0-9\\s]|[[:cntrl:]]|[[:punct:]]", " ", tweets_Greens.df2)
+
+head(tweets_Greens.df2)
+
+# For NZlabour
+tweets_labour.df2<- gsub("www\\.[^\\s]+|@\\S+|http\\S+|#\\S+|<[^>]+>", "", tweets_labour.df2)
+tweets_labour.df2<- gsub("[^a-zA-Z0-9\\s]|[[:cntrl:]]|[[:punct:]]", " ", tweets_labour.df2)
+head(tweets_labour.df2)
+
+# For NZNational
+tweets_National.df2<- gsub("www\\.[^\\s]+|@\\S+|http\\S+|#\\S+|<[^>]+>", "", tweets_National.df2)
+tweets_National.df2<- gsub("[^a-zA-Z0-9\\s]|[[:cntrl:]]|[[:punct:]]", " ", tweets_National.df2)
+head(tweets_National.df2)
+
+# Convert data frame into a vector before performing sentiment analysis
+word_Greens.df<- as.vector(tweets_Greens.df2)
+word_labour.df<- as.vector(tweets_labour.df2)
+word_National.df<- as.vector(tweets_National.df2)
+
+# Perform sentiment analysis to score tweets on emotion
+emotion_Greens.df<- get_nrc_sentiment(word_Greens.df)
+emotion_labour.df<- get_nrc_sentiment(word_labour.df)
+emotion_National.df<- get_nrc_sentiment(word_National.df)
+
+
+# For NZGreens
+
+
+# For NZlabour
+
+
+# For NZNational
